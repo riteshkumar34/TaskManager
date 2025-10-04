@@ -4,6 +4,7 @@ import { FaArrowLeft } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import api from "../lib/axios.js";
+import { localStorageAPI } from "../lib/localStorage.js";
 
 const CreatePage = () => {
   const [title, setTitle] = useState("");
@@ -11,14 +12,6 @@ const CreatePage = () => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { FaArrowLeft } from "react-icons/fa";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import api from "../lib/axios.js";
-import { localStorageAPI } from "../lib/localStorage.js";
 
 const CreatePage = () => {
   const [title, setTitle] = useState("");
