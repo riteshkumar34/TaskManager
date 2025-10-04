@@ -13,13 +13,6 @@ const CreatePage = () => {
 
   const navigate = useNavigate();
 
-const CreatePage = () => {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const navigate = useNavigate();
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!title.trim() || !content.trim()) {
@@ -51,7 +44,6 @@ const CreatePage = () => {
     } finally {
       setLoading(false);
     }
-  };
   };
 
   return (
