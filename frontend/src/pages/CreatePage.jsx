@@ -12,6 +12,21 @@ const CreatePage = () => {
 
   const navigate = useNavigate();
 
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { FaArrowLeft } from "react-icons/fa";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import api from "../lib/axios.js";
+import { localStorageAPI } from "../lib/localStorage.js";
+
+const CreatePage = () => {
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!title.trim() || !content.trim()) {
@@ -21,10 +36,18 @@ const CreatePage = () => {
 
     setLoading(true);
     try {
-      // POST request to create a new note
-      await api.post("/notes", { title, content });
-      toast.success("Note created Successfully!");
-      // Optional: reset form fields
+      // Try API first, fallback to localStorage
+      try {
+        await api.post("/notes", { title, content });
+        toast.success("Note created Successfully!");
+      } catch (apiError) {
+        console.log("API unavailable, using localStorage");
+        // Fallback to localStorage
+        localStorageAPI.createNote({ title, content });
+        toast.success("Note created locally! (Demo mode - no backend)");
+      }
+      
+      // Reset form fields
       setTitle("");
       setContent("");
       // Navigate back to the notes list after creation
@@ -35,6 +58,7 @@ const CreatePage = () => {
     } finally {
       setLoading(false);
     }
+  };
   };
 
   return (

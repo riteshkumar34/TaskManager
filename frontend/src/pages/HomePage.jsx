@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar.jsx';
 import NoteCard from '../components/NoteCard.jsx';  
 import api from "../lib/axios.js";
+import { localStorageAPI } from "../lib/localStorage.js";
 import NotesNotFound from "../components/NotesNotFound.jsx";
 
 const HomePage = () => {
@@ -11,8 +12,16 @@ const HomePage = () => {
   useEffect(() => {
     const fetchNotes = async () => {
       try {
-        const res = await api.get("/notes");
-        setNotes(res.data);
+        // Try API first, fallback to localStorage
+        try {
+          const res = await api.get("/notes");
+          setNotes(res.data);
+        } catch (apiError) {
+          console.log("API unavailable, using localStorage");
+          // Fallback to localStorage
+          const localNotes = localStorageAPI.getNotes();
+          setNotes(localNotes);
+        }
       } catch (error) {
         console.error("Error fetching notes:", error);
       } finally {
