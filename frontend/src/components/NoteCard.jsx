@@ -3,6 +3,7 @@ import React from 'react'
 import { formatDate } from "../lib/utils.js";
 import { Link } from 'react-router-dom';
 import api from "../lib/axios.js"
+import { localStorageAPI } from "../lib/localStorage.js";
 import toast from "react-hot-toast"
 
 const NoteCard = ({ note,setNotes }) => {
@@ -13,10 +14,19 @@ const NoteCard = ({ note,setNotes }) => {
     if (!window.confirm("Are you sure you want to delete this note?")) return;
 
     try {
-      await api.delete(`/notes/${id}`);
-      setNotes((prev)=>prev.filter(note=>note._id!==id)) //get rid of the delete one 
-      toast.success("Note deleted successfully");
-      // optionally: trigger a refresh or state update
+      // Try API first, fallback to localStorage
+      try {
+        await api.delete(`/notes/${id}`);
+        toast.success("Note deleted successfully");
+      } catch (apiError) {
+        console.log("API unavailable, using localStorage");
+        // Fallback to localStorage
+        localStorageAPI.deleteNote(id);
+        toast.success("Note deleted locally! (Demo mode)");
+      }
+      
+      // Update the UI state
+      setNotes((prev)=>prev.filter(note=>note._id!==id));
     } catch (error) {
       console.error("Error in handleDelete:", error);
       toast.error("Failed to delete note");

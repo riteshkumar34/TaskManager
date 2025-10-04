@@ -2,6 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { Trash2Icon, ArrowLeftIcon } from 'lucide-react';
 import api from '../lib/axios.js';
+import { toast } from 'react-hot-toast';
+
+const NoteDetailPage = () => {
+  const [note, setNote] = useState({ title: '', content: '' });
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  const navigate = useNavigate();
+  const { id } = useParams();
+
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams, Link } from 'react-router-dom';
+import { Trash2Icon, ArrowLeftIcon } from 'lucide-react';
+import api from '../lib/axios.js';
 import { localStorageAPI } from '../lib/localStorage.js';
 import { toast } from 'react-hot-toast';
 
@@ -84,6 +98,13 @@ const NoteDetailPage = () => {
         });
         toast.success("Note updated locally! (Demo mode)");
       }
+    } catch (error) {
+      console.error("Error updating note:", error);
+      toast.error("Failed to update note");
+    } finally {
+      setSaving(false);
+    }
+  };
     } catch (error) {
       console.error("Error updating note:", error);
       toast.error("Failed to update note");
