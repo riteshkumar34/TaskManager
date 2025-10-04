@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
-import { toast } from "react-hot-toast";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import api from "../lib/axios.js";
 import { localStorageAPI } from "../lib/localStorage.js";
 
@@ -9,6 +10,7 @@ const CreatePage = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -26,12 +28,15 @@ const CreatePage = () => {
         toast.success("Note created Successfully!");
       } catch (apiError) {
         console.log("API unavailable, using localStorage");
+        // Fallback to localStorage
         localStorageAPI.createNote({ title, content });
-        toast.success("Note created locally! (Demo mode)");
+        toast.success("Note created locally! (Demo mode - no backend)");
       }
       
+      // Reset form fields
       setTitle("");
       setContent("");
+      // Navigate back to the notes list after creation
       navigate("/");
     } catch (error) {
       console.error("Error creating note:", error);
@@ -42,55 +47,57 @@ const CreatePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <div className="max-w-2xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-white flex items-center justify-center px-6">
+      <div className="w-full max-w-2xl">
         {/* Back Button */}
         <Link
           to="/"
-          className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 mb-6"
+          className="inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-800 font-medium mb-6 transition-colors"
         >
           <FaArrowLeft className="text-lg" />
           Back to Notes
         </Link>
 
-        {/* Form Card */}
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h1 className="text-2xl font-bold mb-6 text-center">Create New Note</h1>
+        {/* Card */}
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
+          <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">
+            ✨ Create New Note
+          </h2>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Title Field */}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Title */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Title
               </label>
               <input
                 type="text"
                 placeholder="Enter note title..."
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
               />
             </div>
 
-            {/* Content Field */}
+            {/* Content */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Content
               </label>
               <textarea
                 placeholder="Write your note here..."
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 h-32"
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition h-40 resize-none"
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
               />
             </div>
 
-            {/* Submit Button */}
+            {/* Buttons */}
             <div className="flex justify-end">
               <button
                 type="submit"
                 disabled={loading}
-                className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-medium px-6 py-2 rounded-md"
+                className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white font-semibold px-6 py-3 rounded-lg shadow-md transition transform hover:scale-105"
               >
                 {loading ? "Creating..." : "Create Note"}
               </button>
@@ -98,6 +105,9 @@ const CreatePage = () => {
           </form>
         </div>
       </div>
+
+      {/* Toast notifications */}
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };
